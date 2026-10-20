@@ -333,6 +333,13 @@ h1,h2,h3{letter-spacing:-.02em}
   .stage{padding:12px}
   .frame.mo{border-width:0;border-radius:16px}
 }
+
+/* ?raw: Figma 가져오기용 — 화면만 */
+html.raw body{background:#fff}
+html.raw .board-top,html.raw .nav,html.raw .stage-head,html.raw .note{display:none!important}
+html.raw .board{display:block;min-height:0}
+html.raw .stage{padding:0}
+html.raw .frame,html.raw .frame.pc,html.raw .frame.mo{width:auto;max-width:none;border:0;border-radius:0;box-shadow:none;zoom:1!important}
 </style>
 </head>
 <body>
@@ -706,6 +713,7 @@ h1,h2,h3{letter-spacing:-.02em}
 </template>
 
 <script>
+if (/[?&]raw\b/.test(location.search)) document.documentElement.className = 'raw';
 (function(){
   // 59A 평면도 (예시로 그린 구조)
   function plan(cls, w){
@@ -783,7 +791,7 @@ h1,h2,h3{letter-spacing:-.02em}
   document.getElementById('nav').onclick = function(e){ var b = e.target.closest('[data-s]'); if (b){ show(b.dataset.s); window.scrollTo(0, 0); } };
   function setDev(d){ dev = d; frame.className = 'frame ' + d; fit(); document.querySelectorAll('#dev button').forEach(function(b){ b.classList.toggle('on', b.dataset.d === d); }); history.replaceState(null, '', '#' + cur + (d === 'mo' ? '-mo' : '')); }
   document.getElementById('dev').onclick = function(e){ var b = e.target.closest('[data-d]'); if (b) setDev(b.dataset.d); };
-  function fit(){ var st = document.querySelector('.stage'), w = st.clientWidth - 24; frame.style.zoom = dev === 'pc' && w < 1280 ? (w / 1280).toFixed(3) : ''; }
+  function fit(){ if (document.documentElement.className === 'raw') return; var st = document.querySelector('.stage'), w = st.clientWidth - 24; frame.style.zoom = dev === 'pc' && w < 1280 ? (w / 1280).toFixed(3) : ''; }
   window.addEventListener('resize', fit);
   window.addEventListener('hashchange', function(){ var h = location.hash.slice(1); setDev(/-mo$/.test(h) ? 'mo' : 'pc'); show(h.replace(/-mo$/, '')); });
   var h = location.hash.slice(1), mo = /-mo$/.test(h);
